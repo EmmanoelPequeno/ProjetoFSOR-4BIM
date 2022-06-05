@@ -1,21 +1,19 @@
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class Main {
   private int codigoAtual;
   private final Entrada entrada;
-  private final List<Item> items;
-  private final List<Mesa> mesas;
+  private final Dados dados;
 
-  private Main(Entrada entrada) {
+  private Main(Entrada entrada, Dados dados) {
     this.entrada = entrada;
-    this.items = new ArrayList<>();
-    this.mesas = new ArrayList<>();
+    this.dados = dados;
   }
 
   private static final String[] DESCRICOES_OPCOES = new String[] {
-    "Cadastrar mesa", "Listar mesas", "Sair do programa"
+    "Cadastrar item", "Listar mesas", "Sair do programa"
   };
 
   private static final List<Consumer<Main>> FUNCS_OPCOES = List.of(
@@ -23,7 +21,12 @@ public class Main {
 
   public static void main(String[] args) {
     try (var entrada = new Entrada()) {
-      new Main(entrada).rodar();
+      var dados = new Dados();
+      new Thread(new Servidor(dados)).run();
+      new Main(entrada, dados).rodar();
+    } catch (IOException e) {
+      System.err.println(e);
+      System.exit(1);
     }
   }
 
@@ -52,12 +55,12 @@ public class Main {
     var qtd = entrada.lerInt("Digite a quantidade inicial do item: ");
     var item = new Item(codigoAtual++, descricao, preco, qtd);
 
-    this.items.add(item);
+    this.dados.getItems().add(item);
     System.out.println("Item cadastrado");
   }
 
   private void listarMesas() {
-    for (var mesa : this.mesas) {
+    for (var mesa : this.dados.getMesas()) {
       System.out.printf("== Mesa %d\n", mesa.getCodigo());
       System.out.printf("Nome do cliente: %s\n", mesa.getNomeCliente());
       System.out.printf("Total da mesa: R$ %.2f\n", mesa.getTotalConta());

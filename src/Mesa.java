@@ -2,15 +2,13 @@ import java.time.LocalTime;
 
 public class Mesa {
   private int codigo;
-  private int qtdDisponivel;
   private String nomeCliente;
   private LocalTime horaInicio;
   private LocalTime horaFim;
   private double totalConta;
 
-  public Mesa(int codigo, String nomeCliente, int qtdDisponivel, LocalTime horaInicio) {
+  public Mesa(int codigo, String nomeCliente) {
     this.codigo = codigo;
-    this.qtdDisponivel = qtdDisponivel;
     this.nomeCliente = nomeCliente;
     this.horaInicio = LocalTime.now();
   }
@@ -31,10 +29,6 @@ public class Mesa {
     return nomeCliente;
   }
 
-  public int getQtdDisponivel() {
-    return qtdDisponivel;
-  }
-
   public double getTotalConta() {
     return totalConta;
   }
@@ -51,11 +45,7 @@ public class Mesa {
     this.nomeCliente = nomeCliente;
   }
 
-  public void setQtdDisponivel(int qtdDisponivel) {
-    this.qtdDisponivel = qtdDisponivel;
-  }
-
-  public void setTotConta(double totConta) {
-    this.totalConta = totConta;
+  public void adicionarTotalConta(double preco) {
+    this.totalConta += preco;
   }
 }

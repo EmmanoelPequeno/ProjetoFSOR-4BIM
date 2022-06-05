@@ -3,30 +3,22 @@ import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Servidor {
+public class Servidor implements Runnable {
   private final ServerSocket serverSocket;
   private final ExecutorService pool;
+  private final Dados dados;
 
-  public static void main(String[] args) {
-    try {
-      new Servidor().rodar();
-    } catch (IOException e) {
-      System.out.println(e);
-    }
-  }
-
-  public Servidor() throws IOException {
+  public Servidor(Dados dados) throws IOException {
     this.serverSocket = new ServerSocket(8000);
     this.pool = Executors.newFixedThreadPool(5);
+    this.dados = dados;
   }
 
-  public void rodar() {
+  public void run() {
     try {
-      while (true) {
-        System.out.println("Iniciou!");
+      while (true) { 
         var socket = serverSocket.accept();
-        System.out.println("Aceitou!");
-        pool.execute(new Conexao(socket));
+        pool.execute(new Conexao(socket, dados));
       }
     } catch (IOException e) {
       System.err.println(e);
