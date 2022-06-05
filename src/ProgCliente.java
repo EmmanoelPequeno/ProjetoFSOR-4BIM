@@ -125,8 +125,8 @@ public class ProgCliente implements AutoCloseable {
     }
 
     System.out.println("Preço da conta: " + this.sockEntrada.readDouble());
-    System.out.println("Hora de entrada: " + this.sockEntrada.readUTF());
-    System.out.println("Hora de saída: " + this.sockEntrada.readUTF());
+    System.out.println("Horário de entrada: " + this.sockEntrada.readUTF());
+    System.out.println("Horário de saída: " + this.sockEntrada.readUTF());
   }
 
   private void sairDoPrograma() {
