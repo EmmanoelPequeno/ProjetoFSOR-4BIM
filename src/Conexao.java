@@ -86,13 +86,13 @@ public class Conexao implements Runnable {
   private void fecharConta() throws IOException {
     this.continuar = false;
 
-    var horaFim = LocalTime.now();
-    this.mesa.setHoraFim(horaFim);
+    var horarioSaida = LocalTime.now();
+    this.mesa.setHorarioSaida(horarioSaida);
 
     this.sockSaida.writeBoolean(true);
     this.sockSaida.writeDouble(this.mesa.getTotalConta());
-    this.sockSaida.writeUTF(this.mesa.getHoraInicio().toString());
-    this.sockSaida.writeUTF(horaFim.toString());
+    this.sockSaida.writeUTF(this.mesa.getHorarioEntrada().toString());
+    this.sockSaida.writeUTF(horarioSaida.toString());
   }
 
   @FunctionalInterface
