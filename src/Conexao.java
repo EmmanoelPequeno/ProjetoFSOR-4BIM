@@ -22,7 +22,7 @@ public class Conexao implements Runnable {
       var in = new DataInputStream(socket.getInputStream());
       var out = new DataOutputStream(socket.getOutputStream());
 
-     while (this.continuar) {
+      while (this.continuar) {
         this.processar(in, out);
         out.flush();
       }
@@ -40,7 +40,7 @@ public class Conexao implements Runnable {
     switch (tipoReq) {
       case 0:
         var codigoMesa = in.readInt();
-        var nomeCliente = in.readLine();
+        var nomeCliente = in.readUTF();
         this.mesa = new Mesa(codigoMesa, nomeCliente);
         this.dados.getMesas().add(this.mesa);
         out.writeByte(0);
@@ -50,7 +50,7 @@ public class Conexao implements Runnable {
         items = this.dados.getItems();
         out.writeByte(0);
         out.writeInt(items.size());
-        
+
         for (var item : items) {
           out.writeInt(item.getCodigo());
           out.writeUTF(item.getDescricao());
@@ -77,7 +77,7 @@ public class Conexao implements Runnable {
         var horaFim = LocalTime.now();
         this.mesa.setHoraFim(horaFim);
         this.continuar = false;
-        
+
         out.writeByte(0);
         out.writeDouble(this.mesa.getTotalConta());
         out.writeUTF(this.mesa.getHoraInicio().toString());

@@ -19,11 +19,11 @@ public class Cliente {
   }
 
   private static final String[] DESCRICOES_OPCOES = new String[] {
-      "Cadastrar mesa", "Listar items", "Sair do programa"
+      "Cadastrar mesa", "Listar items", "Adicionar item", "Fechar conta", "Sair do programa"
   };
 
   private static final List<Consumer<Cliente>> FUNCS_OPCOES = List.of(
-      Cliente::cadastrarMesa, Cliente::listarItems, Cliente::sairDoPrograma);
+      Cliente::cadastrarMesa, Cliente::listarItems, Cliente::adicionarItem, Cliente::fecharConta, Cliente::sairDoPrograma);
 
   public static void main(String[] args) {
     try (var entrada = new Entrada()) {
@@ -80,7 +80,7 @@ public class Cliente {
 
       this.sockEntrada.readByte();
       var qtdItems = this.sockEntrada.readInt();
-      
+
       for (var i = 0; i < qtdItems; i++) {
         System.out.println("Código: " + this.sockEntrada.readInt());
         System.out.println("Descrição: " + this.sockEntrada.readUTF());
