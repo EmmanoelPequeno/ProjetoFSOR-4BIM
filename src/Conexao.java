@@ -1,15 +1,21 @@
-import java.net.Socket;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
-import java.util.List;
+import java.net.Socket;
 import java.time.LocalTime;
 
 public class Conexao implements Runnable {
+  private static final Requisicao[] FUNCOES_REQUISICOES = new Requisicao[] {
+      Conexao::cadastrarItem, Conexao::listarItens, Conexao::adicionarItem, Conexao::fecharConta
+  };
+
   private final Socket socket;
   private final Dados dados;
-  private boolean continuar;
+  private DataInputStream sockEntrada;
+  private DataOutputStream sockSaida;
   private Mesa mesa;
+  private boolean continuar;
 
   public Conexao(Socket socket, Dados dados) {
     this.socket = socket;
@@ -19,76 +25,78 @@ public class Conexao implements Runnable {
 
   public void run() {
     try {
-      var in = new DataInputStream(socket.getInputStream());
-      var out = new DataOutputStream(socket.getOutputStream());
+      this.sockEntrada = new DataInputStream(this.socket.getInputStream());
+      this.sockSaida = new DataOutputStream(this.socket.getOutputStream());
 
       while (this.continuar) {
-        this.processar(in, out);
-        out.flush();
+        var tipoReq = this.sockEntrada.readByte();
+
+        if (tipoReq >= 0 && tipoReq < FUNCOES_REQUISICOES.length) {
+          FUNCOES_REQUISICOES[tipoReq].accept(this);
+        } else {
+          this.sockSaida.writeBoolean(false);
+          this.sockSaida.writeUTF("Tipo de requisição inexistente");
+        }
+
+        this.sockSaida.flush();
       }
 
-      socket.close();
+      this.socket.close();
+    } catch (EOFException ignored) {
     } catch (IOException e) {
-      System.err.println(e);
+      System.err.println("Erro de conexão: " + e);
     }
   }
 
-  public void processar(DataInputStream in, DataOutputStream out) throws IOException {
-    var tipoReq = in.readByte();
-    List<Item> items;
+  private void cadastrarItem() throws IOException {
+    var codigoMesa = this.sockEntrada.readInt();
+    var nomeCliente = this.sockEntrada.readUTF();
 
-    switch (tipoReq) {
-      case 0:
-        var codigoMesa = in.readInt();
-        var nomeCliente = in.readUTF();
-        this.mesa = new Mesa(codigoMesa, nomeCliente);
-        this.dados.getMesas().add(this.mesa);
-        out.writeByte(0);
+    this.mesa = new Mesa(codigoMesa, nomeCliente);
+    this.dados.getMesas().add(this.mesa);
+    this.sockSaida.writeBoolean(true);
+  }
+
+  private void listarItens() throws IOException {
+    var itens = this.dados.getItens();
+    this.sockSaida.writeBoolean(true);
+    this.sockSaida.writeInt(itens.size());
+
+    for (var item : itens) {
+      this.sockSaida.writeInt(item.getCodigo());
+      this.sockSaida.writeUTF(item.getDescricao());
+      this.sockSaida.writeDouble(item.getPreco());
+    }
+  }
+
+  private void adicionarItem() throws IOException {
+    var codigoItem = this.sockEntrada.readInt();
+    var itens = this.dados.getItens();
+
+    for (var item : itens) {
+      if (item.getCodigo() == codigoItem) {
+        this.mesa.adicionarTotalConta(item.getPreco());
         break;
-
-      case 1:
-        items = this.dados.getItems();
-        out.writeByte(0);
-        out.writeInt(items.size());
-
-        for (var item : items) {
-          out.writeInt(item.getCodigo());
-          out.writeUTF(item.getDescricao());
-          out.writeDouble(item.getPreco());
-        }
-
-        break;
-
-      case 2:
-        var codigoItem = in.readInt();
-        items = this.dados.getItems();
-
-        for (var item : items) {
-          if (item.getCodigo() == codigoItem) {
-            this.mesa.adicionarTotalConta(item.getPreco());
-            break;
-          }
-        }
-
-        out.writeByte(0);
-        break;
-
-      case 3:
-        var horaFim = LocalTime.now();
-        this.mesa.setHoraFim(horaFim);
-        this.continuar = false;
-
-        out.writeByte(0);
-        out.writeDouble(this.mesa.getTotalConta());
-        out.writeUTF(this.mesa.getHoraInicio().toString());
-        out.writeUTF(horaFim.toString());
-        break;
-
-      default:
-        out.writeByte(1);
-        break;
+      }
     }
 
-    out.flush();
+    this.sockSaida.writeBoolean(true);
+  }
+
+  private void fecharConta() throws IOException {
+    this.continuar = false;
+
+    var horaFim = LocalTime.now();
+    this.mesa.setHoraFim(horaFim);
+
+    this.sockSaida.writeBoolean(true);
+    this.sockSaida.writeDouble(this.mesa.getTotalConta());
+    this.sockSaida.writeUTF(this.mesa.getHoraInicio().toString());
+    this.sockSaida.writeUTF(horaFim.toString());
+  }
+
+  @FunctionalInterface
+  private interface Requisicao {
+    void accept(Conexao conexao) throws IOException;
   }
 }

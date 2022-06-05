@@ -12,11 +12,25 @@ public class Entrada implements AutoCloseable {
     this.scanner.close();
   }
 
-  public void lerEnter(String msg) {
-    System.out.print(msg);
-    scanner.nextLine();
+  public <T> T escolherOpcao(String[] descricoes, T[] opcoes) {
+    System.out.println("== Opções disponíveis:");
+
+    for (var i = 0; i < descricoes.length; i++) {
+      System.out.printf("%d. %s\n", i + 1, descricoes[i]);
+    }
+
+    var i = this.lerIndice("Escolha uma: ", descricoes.length);
+    System.out.println();
+
+    var opcao = opcoes[i];
+    return opcao;
   }
-  
+
+  public void aguardarEnter() {
+    System.out.print("\nAperte Enter para continuar...");
+    this.scanner.nextLine();
+  }
+
   public String lerString(String msg) {
     while (true) {
       System.out.print(msg);
