@@ -1,44 +1,28 @@
 public class Item {
-  private int codigo, qtd;
-  private String descricao;
-  private double preco;
+  private final int codigo, quantidade;
+  private final String descricao;
+  private final double preco;
 
-  public Item(int codigo, String descricao, double preco, int qtd) {
+  public Item(int codigo, String descricao, double preco, int quantidade) {
     this.codigo = codigo;
     this.descricao = descricao;
     this.preco = preco;
-    this.qtd = qtd;
+    this.quantidade = quantidade;
   }
 
   public int getCodigo() {
-    return codigo;
-  }
-
-  public void setCodigo(int codigo) {
-    this.codigo = codigo;
+    return this.codigo;
   }
 
   public String getDescricao() {
-    return descricao;
-  }
-
-  public void setDescricao(String descricao) {
-    this.descricao = descricao;
+    return this.descricao;
   }
 
   public double getPreco() {
-    return preco;
+    return this.preco;
   }
 
-  public void setPreco(double preco) {
-    this.preco = preco;
-  }
-
-  public int getQtd() {
-    return qtd;
-  }
-
-  public void setQtd(int qtd) {
-    this.qtd = qtd;
+  public int getQuantidade() {
+    return this.quantidade;
   }
 }
