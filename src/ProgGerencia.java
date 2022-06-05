@@ -41,7 +41,7 @@ public class ProgGerencia {
     while (true) {
       var funcao = this.entrada.escolherOpcao(DESCRICOES_OPCOES, FUNCOES_OPCOES);
       funcao.accept(this);
-      
+
       if (this.continuar) {
         this.entrada.aguardarEnter();
       } else {
