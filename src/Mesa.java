@@ -1,16 +1,17 @@
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class Mesa {
   private final int codigo;
   private final String nomeCliente;
-  private final LocalTime horarioEntrada;
-  private LocalTime horarioSaida;
+  private final String horarioEntrada;
+  private String horarioSaida;
   private double totalConta;
 
   public Mesa(int codigo, String nomeCliente) {
     this.codigo = codigo;
     this.nomeCliente = nomeCliente;
-    this.horarioEntrada = LocalTime.now();
+    this.horarioEntrada = LocalTime.now().format(DateTimeFormatter.ofPattern("kk:mm:ss"));
   }
 
   public int getCodigo() {
@@ -21,11 +22,11 @@ public class Mesa {
     return this.nomeCliente;
   }
 
-  public LocalTime getHorarioEntrada() {
+  public String getHorarioEntrada() {
     return this.horarioEntrada;
   }
 
-  public LocalTime getHorarioSaida() {
+  public String getHorarioSaida() {
     return this.horarioSaida;
   }
 
@@ -33,7 +34,7 @@ public class Mesa {
     return this.totalConta;
   }
 
-  public void setHorarioSaida(LocalTime horarioSaida) {
+  public void setHorarioSaida(String horarioSaida) {
     this.horarioSaida = horarioSaida;
   }
 
