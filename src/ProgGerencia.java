@@ -14,29 +14,27 @@ public class ProgGerencia {
   private final Dados dados;
   private boolean continuar;
 
-  private ProgGerencia(Entrada entrada, Dados dados) {
-    this.entrada = entrada;
-    this.dados = dados;
-  }
-
   public static void main(String[] args) {
     var dados = new Dados();
 
-    try {
-      new Thread(new Servidor(dados)).start();
-    } catch (IOException e) {
-      System.err.println("Erro de conexão: " + e);
-      System.exit(1);
-    }
-
-    try (var entrada = new Entrada()) {
+    try (var entrada = new Entrada(); var servidor = new Servidor(dados);) {
+      new Thread(servidor).start();
       new ProgGerencia(entrada, dados).run();
+    } catch (IOException e) {
+      System.err.println("Erro no servidor: " + e);
+      System.exit(1);
+      return;
     }
   }
 
-  private void run() {
-    System.out.println("Iniciando...\n");
+  private ProgGerencia(Entrada entrada, Dados dados) {
+    this.entrada = entrada;
+    this.dados = dados;
     this.continuar = true;
+  }
+
+  private void run() {
+    System.out.println("Iniciando...");
 
     while (true) {
       var funcao = this.entrada.escolherOpcao(DESCRICOES_OPCOES, FUNCOES_OPCOES);
@@ -55,9 +53,10 @@ public class ProgGerencia {
     var preco = this.entrada.lerDoubleValidar("Digite o preço de venda do item: ");
     var quantidade = this.entrada.lerInt("Digite a quantidade inicial do item: ");
     var item = new Item(this.codigoAtual++, descricao, preco, quantidade);
+    System.out.println();
 
     this.dados.getItens().add(item);
-    System.out.println("Item cadastrado");
+    System.out.println("Item cadastrado com sucesso");
   }
 
   private void listarMesas() {
