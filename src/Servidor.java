@@ -1,9 +1,11 @@
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.SocketException;
+import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Servidor implements Runnable {
+public class Servidor implements AutoCloseable, Runnable {
   private final ServerSocket socketServidor;
   private final ExecutorService threadPool;
   private final Dados dados;
@@ -14,14 +16,31 @@ public class Servidor implements Runnable {
     this.dados = dados;
   }
 
+  @Override
+  public void close() throws IOException {
+    this.socketServidor.close();
+  }
+
+  @Override
   public void run() {
+    var conexoes = new WeakHashMap<Conexao, Void>();
+
     try {
       while (true) {
         var socket = this.socketServidor.accept();
-        this.threadPool.execute(new Conexao(socket, this.dados));
+        var conexao = new Conexao(socket, this.dados);
+        conexoes.put(conexao, null);
+        this.threadPool.execute(conexao);
       }
+    } catch (SocketException ignored) {
     } catch (IOException e) {
       System.err.println("Erro de conexão:" + e);
+    }
+
+    this.threadPool.shutdown();
+
+    for (var conexao : conexoes.keySet()) {
+      conexao.close();
     }
   }
 }

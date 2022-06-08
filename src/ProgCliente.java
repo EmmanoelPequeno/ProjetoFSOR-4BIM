@@ -23,7 +23,7 @@ public class ProgCliente implements AutoCloseable {
     try (var cliente = new ProgCliente()) {
       cliente.run();
     } catch (IOException e) {
-      System.err.println("Erro de conexão: " + e);
+      System.err.println("Erro de conexão com o servidor: " + e);
       System.exit(1);
     }
   }
@@ -44,7 +44,7 @@ public class ProgCliente implements AutoCloseable {
   }
 
   private void run() throws IOException {
-    System.out.println("Iniciando...\n");
+    System.out.println("Iniciando...");
     this.continuar = true;
 
     while (true) {
@@ -59,7 +59,8 @@ public class ProgCliente implements AutoCloseable {
     }
   }
 
-  private boolean checarErro() throws IOException {
+  private boolean enviar() throws IOException {
+    this.sockSaida.flush();
     var ok = this.sockEntrada.readBoolean();
 
     if (!ok) {
@@ -72,55 +73,53 @@ public class ProgCliente implements AutoCloseable {
   private void cadastrarMesa() throws IOException {
     var codigo = this.entrada.lerInt("Digite o código da mesa: ");
     var nomeCliente = this.entrada.lerString("Digite o nome do cliente: ");
+    System.out.println();
 
     this.sockSaida.writeByte(0);
     this.sockSaida.writeInt(codigo);
     this.sockSaida.writeUTF(nomeCliente);
-    this.sockSaida.flush();
 
-    if (this.checarErro()) {
+    if (this.enviar()) {
       System.out.println("Mesa cadastrada com sucesso");
     }
   }
 
   private void listarItens() throws IOException {
     this.sockSaida.writeByte(1);
-    this.sockSaida.flush();
 
-    if (!this.checarErro()) {
+    if (!this.enviar()) {
       return;
     }
 
     var qtdItens = this.sockEntrada.readInt();
     if (qtdItens == 0) {
-      System.out.println("Sem itens disponíveis");
+      System.out.println("Sem itens cadastrados");
     }
 
     for (var i = 0; i < qtdItens; i++) {
-      if (i != 0) {
-        System.out.println();
-      }
-
       System.out.println("Código: " + this.sockEntrada.readInt());
       System.out.println("Descrição: " + this.sockEntrada.readUTF());
       System.out.println("Preço: " + this.sockEntrada.readDouble());
+      System.out.println();
     }
   }
 
   private void adicionarItem() throws IOException {
     var codigo = this.entrada.lerInt("Digite o código do item: ");
+    System.out.println();
 
     this.sockSaida.writeByte(2);
     this.sockSaida.writeInt(codigo);
-    this.sockSaida.flush();
-    this.checarErro();
+
+    if (this.enviar()) {
+      System.out.println("Item adicionado com sucesso");
+    }
   }
 
   private void fecharConta() throws IOException {
     this.sockSaida.writeByte(3);
-    this.sockSaida.flush();
 
-    if (!this.checarErro()) {
+    if (!this.enviar()) {
       return;
     }
 

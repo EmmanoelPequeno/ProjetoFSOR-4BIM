@@ -13,13 +13,13 @@ public class Entrada implements AutoCloseable {
   }
 
   public <T> T escolherOpcao(String[] descricoes, T[] opcoes) {
-    System.out.println("== Opções disponíveis:");
+    System.out.println("\n== Opções disponíveis:");
 
     for (var i = 0; i < descricoes.length; i++) {
       System.out.printf("%d. %s\n", i + 1, descricoes[i]);
     }
 
-    var i = this.lerIndice("Escolha uma: ", descricoes.length);
+    var i = lerIntValidar("Escolha uma: ", 1, descricoes.length) - 1;
     System.out.println();
 
     var opcao = opcoes[i];
@@ -27,7 +27,7 @@ public class Entrada implements AutoCloseable {
   }
 
   public void aguardarEnter() {
-    System.out.print("\nAperte Enter para continuar...");
+    System.out.print("Aperte Enter para continuar...");
     this.scanner.nextLine();
   }
 
@@ -76,10 +76,6 @@ public class Entrada implements AutoCloseable {
         System.out.println("Entrada inválida!");
       }
     }
-  }
-
-  public int lerIndice(String msg, int max) {
-    return lerIntValidar(msg, 1, max) - 1;
   }
 
   public double lerDoubleValidar(String msg) {

@@ -1,7 +1,8 @@
 public class Item {
-  private final int codigo, quantidade;
+  private final int codigo;
   private final String descricao;
   private final double preco;
+  private int quantidade;
 
   public Item(int codigo, String descricao, double preco, int quantidade) {
     this.codigo = codigo;
@@ -24,5 +25,9 @@ public class Item {
 
   public int getQuantidade() {
     return this.quantidade;
+  }
+
+  public void diminuirQuantidade() {
+    this.quantidade -= 1;
   }
 }

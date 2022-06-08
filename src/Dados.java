@@ -17,4 +17,24 @@ public class Dados {
   public List<Mesa> getMesas() {
     return this.mesas;
   }
+
+  public Item getItemByCodigo(int codigo) {
+    for (var item : this.itens) {
+      if (item.getCodigo() == codigo) {
+        return item;
+      }
+    }
+
+    return null;
+  }
+
+  public Mesa getMesaByCodigo(int codigo) {
+    for (var mesa : this.mesas) {
+      if (mesa.getCodigo() == codigo) {
+        return mesa;
+      }
+    }
+
+    return null;
+  }
 }
