@@ -128,7 +128,10 @@ public class ProgCliente implements AutoCloseable {
     System.out.println("Horário de saída: " + this.sockEntrada.readUTF());
   }
 
-  private void sairDoPrograma() {
+  private void sairDoPrograma() throws IOException {
+    this.sockSaida.writeByte(3);
+    this.sockSaida.flush();
+
     System.out.println("Saindo...");
     this.continuar = false;
   }

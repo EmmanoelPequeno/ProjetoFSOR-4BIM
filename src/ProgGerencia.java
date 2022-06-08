@@ -68,15 +68,15 @@ public class ProgGerencia {
     }
 
     for (var mesa : mesas) {
-      System.out.printf("== Mesa %d\n", mesa.getCodigo());
-      System.out.printf("Nome do cliente: %s\n", mesa.getNomeCliente());
+      System.out.println("== Mesa " + mesa.getCodigo());
+      System.out.println("Nome do cliente: " + mesa.getNomeCliente());
       System.out.printf("Total da mesa: R$ %.2f\n", mesa.getTotalConta());
-      System.out.printf("Horário de início da mesa: %s\n", mesa.getHorarioEntrada());
+      System.out.println("Horário de início da mesa: " + mesa.getHorarioEntrada());
 
       if (mesa.getHorarioSaida() == null) {
         System.out.println("Ainda em atendimento");
       } else {
-        System.out.printf("Horário de saída da mesa: %s\n", mesa.getHorarioSaida());
+        System.out.println("Horário de saída da mesa: " + mesa.getHorarioSaida());
       }
 
       System.out.println();

@@ -4,6 +4,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class Conexao implements AutoCloseable, Runnable {
   private static final Requisicao[] FUNCOES_REQUISICOES = new Requisicao[] {
@@ -125,7 +126,7 @@ public class Conexao implements AutoCloseable, Runnable {
       return;
     }
 
-    var horarioSaida = LocalTime.now();
+    var horarioSaida = LocalTime.now().format(DateTimeFormatter.ofPattern("kk:mm:ss"));
     this.mesa.setHorarioSaida(horarioSaida);
 
     this.sockSaida.writeBoolean(true);
