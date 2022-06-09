@@ -23,7 +23,7 @@ public class ProgCliente implements AutoCloseable {
     try (var cliente = new ProgCliente()) {
       cliente.run();
     } catch (IOException e) {
-      System.err.println("Erro de conexão com o servidor: " + e);
+      System.err.println("Erro de conexão com o servidor: " + e.getMessage());
       System.exit(1);
     }
   }

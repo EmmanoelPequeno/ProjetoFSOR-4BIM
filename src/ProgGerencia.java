@@ -21,7 +21,7 @@ public class ProgGerencia {
       new Thread(servidor).start();
       new ProgGerencia(entrada, dados).run();
     } catch (IOException e) {
-      System.err.println("Erro no servidor: " + e);
+      System.err.println("Erro no servidor: " + e.getMessage());
       System.exit(1);
       return;
     }
@@ -55,31 +55,45 @@ public class ProgGerencia {
     var item = new Item(this.codigoAtual++, descricao, preco, quantidade);
     System.out.println();
 
-    this.dados.getItens().add(item);
+    var lock = this.dados.getLock().writeLock();
+    lock.lock();
+    try {
+      this.dados.getItens().add(item);
+    } finally {
+      lock.unlock();
+    }
+
     System.out.println("Item cadastrado com sucesso");
   }
 
   private void listarMesas() {
-    var mesas = this.dados.getMesas();
+    var lock = this.dados.getLock().readLock();
+    lock.lock();
 
-    if (mesas.isEmpty()) {
-      System.out.println("Sem mesas cadastradas");
-      return;
-    }
+    try {
+      var mesas = this.dados.getMesas();
 
-    for (var mesa : mesas) {
-      System.out.println("== Mesa " + mesa.getCodigo());
-      System.out.println("Nome do cliente: " + mesa.getNomeCliente());
-      System.out.printf("Total da mesa: R$ %.2f\n", mesa.getTotalConta());
-      System.out.println("Horário de início da mesa: " + mesa.getHorarioEntrada());
-
-      if (mesa.getHorarioSaida() == null) {
-        System.out.println("Ainda em atendimento");
-      } else {
-        System.out.println("Horário de saída da mesa: " + mesa.getHorarioSaida());
+      if (mesas.isEmpty()) {
+        System.out.println("Sem mesas cadastradas");
+        return;
       }
 
-      System.out.println();
+      for (var mesa : mesas) {
+        System.out.println("== Mesa " + mesa.getCodigo());
+        System.out.println("Nome do cliente: " + mesa.getNomeCliente());
+        System.out.printf("Total da mesa: R$ %.2f\n", mesa.getTotalConta());
+        System.out.println("Horário de início da mesa: " + mesa.getHorarioEntrada());
+
+        if (mesa.getHorarioSaida() == null) {
+          System.out.println("Ainda em atendimento");
+        } else {
+          System.out.println("Horário de saída da mesa: " + mesa.getHorarioSaida());
+        }
+
+        System.out.println();
+      }
+    } finally {
+      lock.unlock();
     }
   }
 

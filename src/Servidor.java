@@ -34,10 +34,10 @@ public class Servidor implements AutoCloseable, Runnable {
       }
     } catch (SocketException ignored) {
     } catch (IOException e) {
-      System.err.println("Erro de conexão:" + e);
+      System.err.println("Erro de conexão:" + e.getMessage());
     }
 
-    this.threadPool.shutdown();
+    this.threadPool.shutdownNow();
 
     for (var conexao : conexoes.keySet()) {
       conexao.close();
