@@ -6,9 +6,9 @@ import java.net.Socket;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-public class Conexao implements AutoCloseable, Runnable {
+public class ConexaoCliente implements AutoCloseable, Runnable {
   private static final Requisicao[] FUNCOES_REQUISICOES = new Requisicao[] {
-      Conexao::cadastrarMesa, Conexao::listarItens, Conexao::adicionarItem, Conexao::fecharConta
+      ConexaoCliente::cadastrarMesa, ConexaoCliente::listarItens, ConexaoCliente::adicionarItem, ConexaoCliente::fecharConta
   };
 
   private final Socket socket;
@@ -17,7 +17,7 @@ public class Conexao implements AutoCloseable, Runnable {
   private DataOutputStream sockSaida;
   private Mesa mesa;
 
-  public Conexao(Socket socket, Dados dados) {
+  public ConexaoCliente(Socket socket, Dados dados) {
     this.socket = socket;
     this.dados = dados;
   }
@@ -139,6 +139,6 @@ public class Conexao implements AutoCloseable, Runnable {
 
   @FunctionalInterface
   private interface Requisicao {
-    void accept(Conexao conexao) throws IOException;
+    void accept(ConexaoCliente conexao) throws IOException;
   }
 }
