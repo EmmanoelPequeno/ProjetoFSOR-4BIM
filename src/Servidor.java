@@ -23,12 +23,12 @@ public class Servidor implements AutoCloseable, Runnable {
 
   @Override
   public void run() {
-    var conexoes = new WeakHashMap<Conexao, Void>();
+    var conexoes = new WeakHashMap<ConexaoCliente, Void>();
 
     try {
       while (true) {
         var socket = this.socketServidor.accept();
-        var conexao = new Conexao(socket, this.dados);
+        var conexao = new ConexaoCliente(socket, this.dados);
         conexoes.put(conexao, null);
         this.threadPool.execute(conexao);
       }
