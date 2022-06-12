@@ -44,7 +44,7 @@ public class ProgCliente implements AutoCloseable {
   }
 
   private void run() throws IOException {
-    System.out.println("Iniciando...");
+    System.out.println("Bem-vindo(a) ao Refeitório do IFAL...");
     this.continuar = true;
 
     while (true) {
@@ -72,7 +72,7 @@ public class ProgCliente implements AutoCloseable {
 
   private void cadastrarMesa() throws IOException {
     var codigo = this.entrada.lerInt("Digite o código da mesa: ");
-    var nomeCliente = this.entrada.lerString("Digite o nome do cliente: ");
+    var nomeCliente = this.entrada.lerString("Digite seu nome: ");
     System.out.println();
 
     this.sockSaida.writeByte(0);
@@ -97,7 +97,7 @@ public class ProgCliente implements AutoCloseable {
     }
 
     for (var i = 0; i < qtdItens; i++) {
-      System.out.println("Código: " + this.sockEntrada.readInt());
+      System.out.println("== Código do item: " + this.sockEntrada.readInt());
       System.out.println("Descrição: " + this.sockEntrada.readUTF());
       System.out.println("Preço: " + this.sockEntrada.readDouble());
       System.out.println();

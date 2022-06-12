@@ -1,12 +1,12 @@
 import java.io.IOException;
 
-public class ProgGerencia {
+public class ProgCozinha {
   private static final String[] DESCRICOES_OPCOES = new String[] {
       "Cadastrar item", "Listar mesas", "Sair do programa"
   };
 
   private static final Opcao[] FUNCOES_OPCOES = new Opcao[] {
-      ProgGerencia::cadastrarItem, ProgGerencia::listarMesas, ProgGerencia::sairDoPrograma
+      ProgCozinha::cadastrarItem, ProgCozinha::listarMesas, ProgCozinha::sairDoPrograma
   };
 
   private int codigoAtual;
@@ -18,8 +18,10 @@ public class ProgGerencia {
     var dados = new Dados();
 
     try (var entrada = new Entrada(); var servidor = new Servidor(dados);) {
+      System.out.println("Iniciando servidor na porta 8000...");
       new Thread(servidor).start();
-      new ProgGerencia(entrada, dados).run();
+
+      new ProgCozinha(entrada, dados).run();
     } catch (IOException e) {
       System.err.println("Erro no servidor: " + e.getMessage());
       System.exit(1);
@@ -27,14 +29,14 @@ public class ProgGerencia {
     }
   }
 
-  private ProgGerencia(Entrada entrada, Dados dados) {
+  private ProgCozinha(Entrada entrada, Dados dados) {
     this.entrada = entrada;
     this.dados = dados;
     this.continuar = true;
   }
 
   private void run() {
-    System.out.println("Iniciando...");
+    System.out.println("Inicindo programa da cozinha...");
 
     while (true) {
       var funcao = this.entrada.escolherOpcao(DESCRICOES_OPCOES, FUNCOES_OPCOES);
@@ -80,7 +82,7 @@ public class ProgGerencia {
 
       for (var mesa : mesas) {
         System.out.println("== Mesa " + mesa.getCodigo());
-        System.out.println("Nome do cliente: " + mesa.getNomeCliente());
+        System.out.println("Nome do(a) cliente: " + mesa.getNomeCliente());
         System.out.printf("Total da mesa: R$ %.2f\n", mesa.getTotalConta());
         System.out.println("Horário de início da mesa: " + mesa.getHorarioEntrada());
 
@@ -104,6 +106,6 @@ public class ProgGerencia {
 
   @FunctionalInterface
   public interface Opcao {
-    void accept(ProgGerencia main);
+    void accept(ProgCozinha main);
   }
 }
