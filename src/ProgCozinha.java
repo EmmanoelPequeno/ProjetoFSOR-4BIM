@@ -9,7 +9,6 @@ public class ProgCozinha {
       ProgCozinha::cadastrarItem, ProgCozinha::listarMesas, ProgCozinha::sairDoPrograma
   };
 
-  private int codigoAtual;
   private final Entrada entrada;
   private final Dados dados;
   private boolean continuar;
@@ -54,7 +53,7 @@ public class ProgCozinha {
     var descricao = this.entrada.lerString("Digite a descrição do item: ");
     var preco = this.entrada.lerDoubleValidar("Digite o preço de venda do item: ");
     var quantidade = this.entrada.lerInt("Digite a quantidade inicial do item: ");
-    var item = new Item(this.codigoAtual++, descricao, preco, quantidade);
+    var item = new Item(this.dados.getProximoCodigoProduto(), descricao, preco, quantidade);
     System.out.println();
 
     var lock = this.dados.getLock().writeLock();
