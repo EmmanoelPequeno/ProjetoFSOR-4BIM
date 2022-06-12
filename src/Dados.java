@@ -6,11 +6,13 @@ public class Dados {
   private final ReentrantReadWriteLock lock;
   private final List<Item> itens;
   private final List<Mesa> mesas;
+  private int proximoCodigoProduto;
 
   public Dados() {
     this.lock = new ReentrantReadWriteLock();
     this.itens = new ArrayList<>();
     this.mesas = new ArrayList<>();
+    this.proximoCodigoProduto = 1;
   }
 
   public ReentrantReadWriteLock getLock() {
@@ -23,6 +25,10 @@ public class Dados {
 
   public List<Mesa> getMesas() {
     return this.mesas;
+  }
+
+  public int getProximoCodigoProduto() {
+    return this.proximoCodigoProduto++;
   }
 
   public Item getItemByCodigo(int codigo) {
