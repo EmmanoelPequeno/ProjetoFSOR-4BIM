@@ -91,7 +91,7 @@ public class Entrada implements AutoCloseable {
         continue;
       }
 
-      if (numero >= 0) {
+      if (numero > 0) {
         return numero;
       } else {
         System.out.println("Entrada inválida!");
