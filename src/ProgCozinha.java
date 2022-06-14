@@ -16,7 +16,7 @@ public class ProgCozinha {
   public static void main(String[] args) {
     var dados = new Dados();
 
-    try (var entrada = new Entrada(); var servidor = new Servidor(dados);) {
+    try (var entrada = new Entrada(); var servidor = new Servidor(dados)) {
       System.out.println("Iniciando servidor na porta 8000...");
       new Thread(servidor).start();
 
